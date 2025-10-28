@@ -1,5 +1,5 @@
 services:
   web:
-    image: "devopsbytanishka/node-app:latest"
+    image: "prem103/node-app:latest"
     ports:
       - "8000:8000"
