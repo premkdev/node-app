@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'amazon/aws-cli:latest'
-            args '-u root -v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         AWS_ACCOUNT_ID = "060795907993"
