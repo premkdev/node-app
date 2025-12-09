@@ -1,15 +1,22 @@
 pipeline {
     agent {
         docker {
-            image 'docker:latest'
-            args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+            image 'docker:23.0.1'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
+    }
+
+    environment {
+        AWS_ACCOUNT_ID = "060795907993"
+        AWS_REGION = "us-east-1"
+        ECR_REPO_NAME = "node-app-deploy"
+        ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
     }
 
     stages {
         stage ('Code Checkout') {
             steps { 
-                git url: "https://github.com/premkdev/node-app.git", branch: "main"
+                git url "https://github.com/premkdev/node-app.git", branch: "main"
                 echo "Code has been cloned"
             }
         }
@@ -23,35 +30,26 @@ pipeline {
         stage ('Img push to ECR') {
             steps {
                 script {
-                    // Variables
-                    def AWS_ACCOUNT_ID = "060795907993"
-                    def AWS_REGION = "us-east-1"
-                    def ECR_REPO_NAME = "node-app-deploy"
-
                     // Login to ECR
                     sh """
-                        aws ecr get-login-password --region ${us-east-1} \
-                        | docker login --username AWS --password-stdin ${060795907993}.dkr.ecr.${us-east-1}.amazonaws.com
+                        aws ecr get-login-password --region ${AWS_REGION} \
+                        | docker login --username AWS --password-stdin ${ECR_URL}
                     """
 
-                    // Create repo if not exists (safe)
+                    // Create repo if not exists
                     sh """
-                        aws ecr describe-repositories --repository-names ${node-app-deploy} --region ${us-east-1} || \
-                        aws ecr create-repository --repository-name ${node-app-deploy} --region ${us-east-1}
+                        aws ecr describe-repositories --repository-names ${ECR_REPO_NAME} --region ${AWS_REGION} || \
+                        aws ecr create-repository --repository-name ${ECR_REPO_NAME} --region ${AWS_REGION}
                     """
 
-                    // Tag the image
-                    sh """
-                        docker tag node-app:latest ${060795907993}.dkr.ecr.${us-east-1}.amazonaws.com/${node-app-deploy}:latest
-                    """
+                    // Tag image
+                    sh "docker tag node-app:latest ${ECR_URL}/${ECR_REPO_NAME}:latest"
 
-                    // Push image to ECR
-                    sh """
-                        docker push ${060795907993}.dkr.ecr.${us-east-1}.amazonaws.com/${node-app-deploy}:latest
-                    """
+                    // Push image
+                    sh "docker push ${ECR_URL}/${ECR_REPO_NAME}:latest"
 
                     echo "Image pushed to ECR successfully"
-                
+
                 }
 
             }
