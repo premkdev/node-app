@@ -4,8 +4,8 @@ pipeline {
     environment {
         AWS_ACCOUNT_ID = "060795907993"
         AWS_REGION = "us-east-1"
-        ECR_REPO_NAME = "node-app-deploy"
-        ECR_URL = "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+        ECR_REPO_NAME = "ecr-node-app"
+        ECR_URL = "public.ecr.aws/u1j2f8m8/ecr-node-app"
     }
 
     stages {
@@ -30,13 +30,6 @@ pipeline {
                         aws ecr get-login-password --region ${AWS_REGION} \
                         | docker login --username AWS --password-stdin ${ECR_URL}
                     """
-
-                    // Create repo if not exists
-                    sh """
-                        aws ecr describe-repositories --repository-names ${ECR_REPO_NAME} --region ${AWS_REGION} || \
-                        aws ecr create-repository --repository-name ${ECR_REPO_NAME} --region ${AWS_REGION}
-                    """
-
                     // Tag image
                     sh "docker tag node-app:latest ${ECR_URL}/${ECR_REPO_NAME}:latest"
 
