@@ -42,13 +42,28 @@ pipeline {
 
             }
         }
-        stage ('Deploy') {
-            steps {
-                sh "docker-compose down && docker-compose up -d"
-                echo "Deployed successfully"
+        
+        post {
+    always {
+        emailext(
+            attachLog: true,
+            subject: "Build ${currentBuild.result}: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """<p>Build finished!</p>
+                     <p>Project: ${env.JOB_NAME}</p>
+                     <p>Build Number: ${env.BUILD_NUMBER}</p>
+                     <p>Status: ${currentBuild.result}</p>
+                     <p>URL: <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>""",
+            to: 'arunagri03@gmail.com'
+        )
+    }
 
-            }
-        }
+    success {
+        echo "Build successful!"
+    }
 
+    failure {
+        echo "Build failed."
+    }
+  }
     }
 }
