@@ -26,15 +26,15 @@ pipeline {
         stage('Push Image to ECR') {
             steps {
                 script {
+                   steps {
                     sh """
-                        aws ecr-public get-login-password --region ${AWS_REGION} \
-                        | docker login --username AWS --password-stdin public.ecr.aws
-                    """
+                       aws ecr get-login-password --region ${AWS_REGION} \
+                       | docker login --username AWS --password-stdin ${ECR_URL}
+                  """
+                   sh "docker tag node-app:latest ${ECR_URL}/${ECR_REPO_NAME}:latest"
+                   sh "docker push ${ECR_URL}/${ECR_REPO_NAME}:latest"
 
-                    sh "docker tag node-app:latest ${ECR_URL}/${ECR_REPO_NAME}:latest"
-                    sh "docker push ${ECR_URL}/${ECR_REPO_NAME}:latest"
-
-                    echo "Image pushed to ECR successfully"
+                   echo "Image pushed to ECR successfully"
                 }
             }
         }
