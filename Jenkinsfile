@@ -4,7 +4,7 @@ pipeline {
     environment {
         AWS_REGION = "us-east-1"
         ECR_REPO_NAME = "ecr-node-app"
-        ECR_URL = "060795907993.dkr.ecr.us-east-1.amazonaws.com/ecr-node-app"
+        ECR_URL = "public.ecr.aws/u1j2f8m8/ecr-node-app"
     }
 
     stages {
