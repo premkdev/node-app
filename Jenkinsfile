@@ -39,7 +39,7 @@ pipeline {
             }
         }
     }
-
+}
     post {
         always {
             script {
@@ -67,5 +67,4 @@ pipeline {
             echo "Build failed!"
         }
     }
-  }
 }
