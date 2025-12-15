@@ -27,11 +27,11 @@ pipeline {
             steps {
                 script {
                     sh """
-                       aws ecr get-login-password --region ${AWS_REGION} \
-                       | docker login --username AWS --password-stdin ${ECR_URL}
-                  """
-                   sh "docker tag node-app:latest ${ECR_URL}/${ECR_REPO_NAME}:latest"
-                   sh "docker push ${ECR_URL}/${ECR_REPO_NAME}:latest"
+                      aws ecr-public get-login-password --region us-east-1 \
+                    | docker login --username AWS --password-stdin public.ecr.aws
+                    """
+                  sh "docker tag ecr-node-app:latest public.ecr.aws/u1j2f8m8/ecr-node-app:latest"
+                  sh "docker push public.ecr.aws/u1j2f8m8/ecr-node-app:latest"
 
                    echo "Image pushed to ECR successfully"
                 }
