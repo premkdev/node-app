@@ -30,6 +30,7 @@ pipeline {
                       aws ecr-public get-login-password --region us-east-1 \
                     | docker login --username AWS --password-stdin public.ecr.aws
                     """
+                  sh "docker build -t ecr-node-app ."
                   sh "docker tag ecr-node-app:latest public.ecr.aws/u1j2f8m8/ecr-node-app:latest"
                   sh "docker push public.ecr.aws/u1j2f8m8/ecr-node-app:latest"
 
