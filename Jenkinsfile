@@ -67,4 +67,5 @@ pipeline {
             echo "Build failed!"
         }
     }
+  }
 }
