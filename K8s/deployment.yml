@@ -11,7 +11,7 @@ spec:
       app: node-app
   template:
     metadata:
-      Labels:
+      labels:
         app: node-app
     spec:
       containers:
