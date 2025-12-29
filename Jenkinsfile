@@ -8,7 +8,6 @@ pipeline {
     }
 
     stages {
-
         stage('Code Checkout') {
             steps {
                 git url: "https://github.com/premkdev/node-app.git", branch: "main"
